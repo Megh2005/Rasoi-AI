@@ -3,6 +3,9 @@ import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 import './globals.css'
 import { Toaster } from 'react-hot-toast'
+import {
+  ClerkProvider,
+} from '@clerk/nextjs'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -17,39 +20,45 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en">
-      <head>
-        <link rel="shortcut icon" href="/fav.png" type="image/x-icon" />
-        <link rel="apple-touch-icon" href="/rasoi.png" />
-      </head>
-      <body className={inter.className}>
-        {children}
-        <Toaster 
-          position="top-right"
-          toastOptions={{
-            duration: 4000,
-            style: {
-              background: '#fff',
-              color: '#333',
-              padding: '16px',
-              borderRadius: '8px',
-              boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
-            },
-            success: {
-              iconTheme: {
-                primary: '#10B981',
-                secondary: '#ECFDF5',
+    <ClerkProvider
+      appearance={{
+        cssLayerName: 'clerk',
+      }}
+    >
+      <html lang="en">
+        <head>
+          <link rel="shortcut icon" href="/fav.png" type="image/x-icon" />
+          <link rel="apple-touch-icon" href="/rasoi.png" />
+        </head>
+        <body className={inter.className}>
+          {children}
+          <Toaster
+            position="top-center"
+            toastOptions={{
+              duration: 4000,
+              style: {
+                background: '#fff',
+                color: '#333',
+                padding: '16px',
+                borderRadius: '8px',
+                boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
               },
-            },
-            error: {
-              iconTheme: {
-                primary: '#EF4444',
-                secondary: '#FEF2F2',
+              success: {
+                iconTheme: {
+                  primary: '#10B981',
+                  secondary: '#ECFDF5',
+                },
               },
-            },
-          }}
-        />
-      </body>
-    </html>
+              error: {
+                iconTheme: {
+                  primary: '#EF4444',
+                  secondary: '#FEF2F2',
+                },
+              },
+            }}
+          />
+        </body>
+      </html>
+    </ClerkProvider>
   )
 }
