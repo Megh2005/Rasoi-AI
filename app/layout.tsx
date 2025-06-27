@@ -18,6 +18,10 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
+      <head>
+        <link rel="shortcut icon" href="/fav.png" type="image/x-icon" />
+        <link rel="apple-touch-icon" href="/rasoi.png" />
+      </head>
       <body className={inter.className}>
         {children}
         <Toaster 
