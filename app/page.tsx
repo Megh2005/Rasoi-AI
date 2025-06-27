@@ -10,6 +10,7 @@ import { Clock, Users, ChefHat, MapPin, Thermometer } from 'lucide-react';
 import { toast } from 'react-hot-toast';
 import { getCurrentSeason } from '@/lib/utils';
 import { generateFoodMenu } from '@/lib/gemini';
+import Navbar from '@/components/Navbar';
 
 interface Recipe {
   name: string;
@@ -160,6 +161,7 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-orange-50 via-white to-red-50">
+      <Navbar/>
       <div className="container mx-auto px-4 py-8">
         {/* Header */}
         <div className="text-center mb-8">

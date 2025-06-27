@@ -6,6 +6,8 @@ import { Toaster } from 'react-hot-toast'
 import {
   ClerkProvider,
 } from '@clerk/nextjs'
+import { neobrutalism } from '@clerk/themes'
+
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -22,7 +24,11 @@ export default function RootLayout({
   return (
     <ClerkProvider
       appearance={{
-        cssLayerName: 'clerk',
+        baseTheme: neobrutalism,
+        layout: {
+          socialButtonsVariant: 'iconButton',
+          termsPageUrl: 'https://clerk.com/terms'
+        }
       }}
     >
       <html lang="en">
