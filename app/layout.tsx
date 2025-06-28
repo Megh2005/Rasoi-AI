@@ -31,7 +31,7 @@ export default function RootLayout({
         }
       }}
     >
-      <html lang="en">
+      <html lang="en" suppressHydrationWarning>
         <head>
           <link rel="shortcut icon" href="/fav.png" type="image/x-icon" />
           <link rel="apple-touch-icon" href="/rasoi.png" />

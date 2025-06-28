@@ -1,4 +1,3 @@
-// lib/gemini.ts
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import { FOOD_PROMPT } from './prompts';
 

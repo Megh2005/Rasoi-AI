@@ -107,35 +107,22 @@ export default function Home() {
   ];
 
   const moods = [
-    'Cheesy & Gooey',
-    'Chilled & Refreshing',
-    'Comfort Food',
-    'Crispy & Crunchy',
-    'Elegant & Gourmet',
-    'Exotic Flavors',
-    'Festive & Rich',
-    'Fusion',
-    'Hearty & Filling',
-    'Home-Style Cooking',
-    'Indulgent & Decadent',
-    'Light & Healthy',
-    'Minimal & Clean',
-    'Nutritious & Wholesome',
-    'Party Vibes',
-    'Quick & Easy',
-    'Romantic Dinner',
-    'Spicy & Bold',
-    'Street Food Style',
-    'Sweet Cravings',
-    'Traditional',
-    'Umami Bomb',
-    'Warm & Cozy',
-    'Zesty & Tangy'
+    'Angry',
+    'Anxious',
+    'Calm',
+    'Confident',
+    'Content',
+    'Depressed',
+    'Excited',
+    'Happy',
+    'Lonely',
+    'Sad'
   ];
-
+  
   const preferences = [
     'Veg',
-    'Non Veg'
+    'Non Veg',
+    'Jain'
   ]
 
 

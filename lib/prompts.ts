@@ -1,5 +1,3 @@
-// lib/prompts.ts
-
 export const FOOD_PROMPT = `
 You are a renowned Indian chef and food expert. Based on the user's preferences, generate 5 authentic main course recipes that perfectly match their requirements.
 
