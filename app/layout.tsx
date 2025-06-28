@@ -2,11 +2,13 @@
 import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 import './globals.css'
-import { Toaster } from 'react-hot-toast'
 import {
   ClerkProvider,
 } from '@clerk/nextjs'
 import { neobrutalism } from '@clerk/themes'
+import { Toaster } from '@/components/ui/sonner'
+import Navbar from '@/components/Navbar'
+import Footer from '@/components/Footer'
 
 
 const inter = Inter({ subsets: ['latin'] })
@@ -37,32 +39,11 @@ export default function RootLayout({
           <link rel="apple-touch-icon" href="/rasoi.png" />
         </head>
         <body className={inter.className}>
+          <Navbar />
           {children}
+          <Footer />
           <Toaster
-            position="top-center"
-            toastOptions={{
-              duration: 4000,
-              style: {
-                background: '#fff',
-                color: '#333',
-                padding: '16px',
-                borderRadius: '8px',
-                boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
-              },
-              success: {
-                iconTheme: {
-                  primary: '#10B981',
-                  secondary: '#ECFDF5',
-                },
-              },
-              error: {
-                iconTheme: {
-                  primary: '#EF4444',
-                  secondary: '#FEF2F2',
-                },
-              },
-            }}
-          />
+            position="top-center"/>
         </body>
       </html>
     </ClerkProvider>
