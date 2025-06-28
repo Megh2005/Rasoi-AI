@@ -11,6 +11,7 @@ import { toast } from 'react-hot-toast';
 import { getCurrentSeason } from '@/lib/utils';
 import { generateFoodMenu } from '@/lib/gemini';
 import Navbar from '@/components/Navbar';
+import { cuisines, moods, preferences, states } from '@/lib/prompts';
 
 interface Recipe {
   name: string;
@@ -31,99 +32,6 @@ export default function Home() {
   const [recipes, setRecipes] = useState<Recipe[]>([]);
   const [loading, setLoading] = useState(false);
   const [selectedRecipe, setSelectedRecipe] = useState<Recipe | null>(null);
-
-  const cuisines = [
-    'Andhra',
-    'Awadhi',
-    'Bengali',
-    'Bihari',
-    'Chettinad',
-    'Goan',
-    'Gujarati',
-    'Haryanvi',
-    'Himachali',
-    'Hyderabadi',
-    'Kashmiri',
-    'Kerala',
-    'Konkani',
-    'Maharashtrian',
-    'Malabari',
-    'Manipuri',
-    'Marwari',
-    'Mughlai',
-    'Nagpuri',
-    'North Eastern',
-    'North Indian',
-    'Odia',
-    'Parsi',
-    'Punjabi',
-    'Rajasthani',
-    'Sindhi',
-    'South Indian',
-    'Tamil',
-    'Telugu',
-    'Udupi',
-    'Uttarakhandi'
-  ];
-
-
-  const states = [
-    'Andaman and Nicobar Islands',
-    'Andhra Pradesh',
-    'Arunachal Pradesh',
-    'Assam',
-    'Bihar',
-    'Chandigarh',
-    'Chhattisgarh',
-    'Dadra and Nagar Haveli and Daman and Diu',
-    'Delhi',
-    'Goa',
-    'Gujarat',
-    'Haryana',
-    'Himachal Pradesh',
-    'Jammu and Kashmir',
-    'Jharkhand',
-    'Karnataka',
-    'Kerala',
-    'Ladakh',
-    'Lakshadweep',
-    'Madhya Pradesh',
-    'Maharashtra',
-    'Manipur',
-    'Meghalaya',
-    'Mizoram',
-    'Nagaland',
-    'Odisha',
-    'Puducherry',
-    'Punjab',
-    'Rajasthan',
-    'Sikkim',
-    'Tamil Nadu',
-    'Telangana',
-    'Tripura',
-    'Uttar Pradesh',
-    'Uttarakhand',
-    'West Bengal'
-  ];
-
-  const moods = [
-    'Angry',
-    'Anxious',
-    'Calm',
-    'Confident',
-    'Content',
-    'Depressed',
-    'Excited',
-    'Happy',
-    'Lonely',
-    'Sad'
-  ];
-  
-  const preferences = [
-    'Veg',
-    'Non Veg',
-    'Jain'
-  ]
 
 
   const handleGenerateMenu = async () => {
