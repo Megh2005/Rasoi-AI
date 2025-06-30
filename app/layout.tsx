@@ -26,22 +26,20 @@ export default function RootLayout({
   return (
     <ClerkProvider
       appearance={{
-        baseTheme: neobrutalism,
         layout: {
           socialButtonsVariant: 'iconButton',
           termsPageUrl: 'https://clerk.com/terms'
         }
       }}
     >
-      <html lang="en" suppressHydrationWarning>
-        <head>
+      <html lang="en">
+        <head suppressHydrationWarning>
           <link rel="shortcut icon" href="/fav.png" type="image/x-icon" />
           <link rel="apple-touch-icon" href="/rasoi.png" />
         </head>
         <body className={inter.className}>
           <Navbar />
           {children}
-          <Footer />
           <Toaster
             position="top-center"/>
         </body>

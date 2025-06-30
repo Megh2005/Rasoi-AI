@@ -9,9 +9,7 @@ import { Separator } from '@/components/ui/separator';
 import { Clock, Users, ChefHat, MapPin, Thermometer, Loader2, CheckCircle, XCircle } from 'lucide-react';
 import { getCurrentSeason } from '@/lib/utils';
 import { generateFoodMenu } from '@/lib/gemini';
-import Navbar from '@/components/Navbar';
 import { cuisines, moods, preferences, states } from '@/lib/prompts';
-import Footer from '@/components/Footer';
 
 interface Recipe {
   name: string;
@@ -251,10 +249,58 @@ export default function Home() {
             <Button
               onClick={handleGenerateMenu}
               disabled={loading || !cuisine || !state || !mood || !preference}
-              className="w-full cursor-pointer bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white"
+              className="w-full cursor-pointer relative overflow-hidden text-white font-semibold text-lg py-4 px-8 rounded-2xl shadow-2xl transition-all duration-300 hover:scale-[1.02] hover:shadow-3xl active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
+              style={{
+                background: `
+      radial-gradient(circle at 30% 20%, rgba(255, 255, 255, 0.3) 0%, transparent 50%),
+      radial-gradient(circle at 70% 80%, rgba(240, 240, 245, 0.2) 0%, transparent 50%),
+      radial-gradient(circle at 20% 70%, rgba(250, 250, 255, 0.25) 0%, transparent 50%),
+      linear-gradient(135deg, 
+        rgba(99, 102, 241, 0.9) 0%, 
+        rgba(139, 92, 246, 0.85) 25%, 
+        rgba(168, 85, 247, 0.9) 50%, 
+        rgba(147, 51, 234, 0.95) 75%, 
+        rgba(126, 34, 206, 1) 100%
+      ),
+      repeating-linear-gradient(
+        45deg,
+        transparent,
+        transparent 2px,
+        rgba(255, 255, 255, 0.08) 2px,
+        rgba(255, 255, 255, 0.08) 4px
+      ),
+      repeating-linear-gradient(
+        -45deg,
+        transparent,
+        transparent 3px,
+        rgba(255, 255, 255, 0.05) 3px,
+        rgba(255, 255, 255, 0.05) 6px
+      )
+    `,
+                backgroundSize: '200px 200px, 300px 300px, 250px 250px, 100% 100%, 15px 15px, 20px 20px'
+              }}
               size="lg"
             >
-              {loading ? 'Generating Menu...' : 'Generate My Menu ✨'}
+              {/* Marble texture overlay */}
+              <div
+                className="absolute inset-0 opacity-30 rounded-2xl"
+                style={{
+                  background: `
+        radial-gradient(circle at 15% 25%, rgba(255, 255, 255, 0.4) 0%, transparent 40%),
+        radial-gradient(circle at 85% 75%, rgba(255, 255, 255, 0.3) 0%, transparent 45%),
+        radial-gradient(circle at 45% 10%, rgba(255, 255, 255, 0.2) 0%, transparent 35%),
+        radial-gradient(circle at 60% 90%, rgba(255, 255, 255, 0.25) 0%, transparent 40%)
+      `
+                }}
+              />
+
+              {/* Shimmer effect */}
+              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent transform -skew-x-12 -translate-x-full group-hover:translate-x-full transition-transform duration-1000 rounded-2xl" />
+
+              {/* Button text */}
+              <span className="relative z-10 drop-shadow-lg">
+                {loading ? 'Generating Menu...' : 'Generate My Menu ✨'}
+              </span>
             </Button>
           </CardContent>
         </Card>
