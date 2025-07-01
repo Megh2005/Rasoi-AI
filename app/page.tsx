@@ -1,428 +1,347 @@
 "use client";
-
-import { useState } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Badge } from '@/components/ui/badge';
-import { Separator } from '@/components/ui/separator';
-import { Clock, Users, ChefHat, MapPin, Thermometer, Loader2, CheckCircle, XCircle } from 'lucide-react';
-import { getCurrentSeason } from '@/lib/utils';
-import { generateFoodMenu } from '@/lib/gemini';
-import { cuisines, moods, preferences, states } from '@/lib/prompts';
-
-interface Recipe {
-  name: string;
-  description: string;
-  cookingTime: string;
-  servings: string;
-  difficulty: string;
-  ingredients: string[];
-  instructions: string[];
-  tips: string[];
-}
-
-// Custom Toast Component for Promise-based toasts
-interface ToastProps {
-  toast: {
-    show: boolean;
-    message: string;
-    type: 'loading' | 'success' | 'error';
-  };
-  onClose: () => void;
-}
-
-const Toast = ({ toast, onClose }: ToastProps) => {
-  if (!toast.show) return null;
-
-  const getIcon = () => {
-    switch (toast.type) {
-      case 'loading':
-        return <Loader2 className="h-4 w-4 animate-spin text-blue-600" />;
-      case 'success':
-        return <CheckCircle className="h-4 w-4 text-emerald-600" />;
-      case 'error':
-        return <XCircle className="h-4 w-4 text-rose-600" />;
-      default:
-        return null;
-    }
-  };
-
-  const getStyles = () => {
-    switch (toast.type) {
-      case 'loading':
-        return 'bg-blue-50 border-blue-200 text-blue-800';
-      case 'success':
-        return 'bg-emerald-50 border-emerald-200 text-emerald-800';
-      case 'error':
-        return 'bg-rose-50 border-rose-200 text-rose-800';
-      default:
-        return 'bg-slate-50 border-slate-200 text-slate-800';
-    }
-  };
-
-  return (
-    <div className={`fixed top-4 right-4 z-50 p-4 rounded-lg shadow-lg border transition-all duration-500 transform ${getStyles()} ${toast.show ? 'translate-x-0 opacity-100' : 'translate-x-full opacity-0'}`}>
-      <div className="flex items-center gap-3">
-        {getIcon()}
-        <span className="text-sm font-medium">{toast.message}</span>
-        {toast.type !== 'loading' && (
-          <button
-            onClick={onClose}
-            className="ml-2 text-lg leading-none hover:opacity-70 transition-opacity"
-          >
-            ×
-          </button>
-        )}
-      </div>
-    </div>
-  );
-};
+import { Button } from "@/components/ui/button"
+import { Card, CardContent } from "@/components/ui/card"
+import { Badge } from "@/components/ui/badge"
+import { ChefHat, Sparkles, Heart, Clock } from "lucide-react"
+import { motion } from "framer-motion"
 
 export default function Home() {
-  const [cuisine, setCuisine] = useState('');
-  const [state, setState] = useState('');
-  const [mood, setMood] = useState('');
-  const [preference, setPreference] = useState('');
-  const [recipes, setRecipes] = useState<Recipe[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [selectedRecipe, setSelectedRecipe] = useState<Recipe | null>(null);
-  const [toast, setToast] = useState({ show: false, message: '', type: 'success' });
+  const fadeInUp = {
+    initial: { opacity: 0, y: 60 },
+    animate: { opacity: 1, y: 0 },
+    transition: { duration: 0.6, ease: "easeOut" }
+  }
 
-  // Simple toast function
-  const showToast = (message: string, type: 'loading' | 'success' | 'error' = 'success') => {
-    setToast({ show: true, message, type });
-    setTimeout(() => {
-      setToast({ show: false, message: '', type: 'success' });
-    }, 5000);
-  };
-
-  // Promise-based toast function
-  const showPromiseToast = async (promise: Promise<any>, messages: { loading: string; success: string; error: string }) => {
-    // Show loading toast
-    setToast({ show: true, message: messages.loading, type: 'loading' });
-
-    try {
-      const result = await promise;
-      // Show success toast
-      setToast({ show: true, message: messages.success, type: 'success' });
-      setTimeout(() => {
-        setToast({ show: false, message: '', type: 'success' });
-      }, 3000);
-      return result;
-    } catch (error) {
-      // Show error toast
-      setToast({ show: true, message: messages.error, type: 'error' });
-      setTimeout(() => {
-        setToast({ show: false, message: '', type: 'success' });
-      }, 3000);
-      throw error;
-    }
-  };
-
-
-  const handleGenerateMenu = async () => {
-    if (!cuisine || !state || !mood || !preference) {
-      // Simple error toast for validation
-      showToast('Please select all preferences to continue', 'error');
-      return;
-    }
-
-    // Promise-based toast with loading, success, and error states
-    const menuGenerationPromise = (async () => {
-      setLoading(true);
-      try {
-        const currentSeason = getCurrentSeason();
-        const generatedRecipes = await generateFoodMenu(cuisine, state, mood, currentSeason, preference);
-        setRecipes(generatedRecipes);
-        return generatedRecipes;
-      } catch (error) {
-        console.error('Error generating menu:', error);
-        throw new Error('Failed to generate menu. Please try again.');
-      } finally {
-        setLoading(false);
+  const staggerContainer = {
+    animate: {
+      transition: {
+        staggerChildren: 0.2
       }
-    })();
+    }
+  }
 
-    // Show promise toast
-    showPromiseToast(
-      menuGenerationPromise,
-      {
-        loading: 'Generating your personalized menu...',
-        success: 'Your delicious menu is ready! ✨',
-        error: 'Failed to generate menu. Please try again.'
-      }
-    );
-  };
+  const scaleIn = {
+    initial: { opacity: 0, scale: 0.8 },
+    animate: { opacity: 1, scale: 1 },
+    transition: { duration: 0.5, ease: "easeOut" }
+  }
+
+  const slideInLeft = {
+    initial: { opacity: 0, x: -50 },
+    animate: { opacity: 1, x: 0 },
+    transition: { duration: 0.6, ease: "easeOut" }
+  }
+
+  const slideInRight = {
+    initial: { opacity: 0, x: 50 },
+    animate: { opacity: 1, x: 0 },
+    transition: { duration: 0.6, ease: "easeOut" }
+  }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-100">
-      <Toast
-        toast={toast as { show: boolean; message: string; type: 'loading' | 'success' | 'error' }}
-        onClose={() => setToast({ show: false, message: '', type: 'success' })}
-      />
-      <div className="container mx-auto px-4 py-8">
-        {/* Header */}
-        <div className="text-center mb-8">
-          <div className="flex items-center justify-center gap-2 mb-4">
-            <ChefHat className="h-8 w-8 text-indigo-600" />
-            <h1 className="text-4xl font-bold text-slate-900">Rasoi AI</h1>
-          </div>
-          <p className="text-lg text-slate-600">Discover authentic Indian recipes tailored to your mood</p>
-          <div className="flex items-center justify-center gap-2 mt-2">
-            <Thermometer className="h-4 w-4 text-blue-500" />
-            <Badge variant="secondary" className="text-sm bg-slate-100 text-slate-700">
-              {getCurrentSeason()} Season
-            </Badge>
+    <div className="min-h-screen bg-gradient-to-br from-violet-100 via-fuchsia-50  to-emerald-50">
+      {/* Hero Section */}
+      <section className="relative py-24 lg:py-32 overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-r from-indigo-200/40  via-pink-200/40 to-rose-200/40"></div>
+
+        {/* Floating Elements */}
+        <motion.div
+          className="absolute top-20 left-10 w-20 h-20 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-full opacity-20"
+          animate={{
+            y: [0, -20, 0],
+            rotate: [0, 180, 360]
+          }}
+          transition={{
+            duration: 6,
+            repeat: Infinity,
+            ease: "easeInOut"
+          }}
+        />
+        <motion.div
+          className="absolute top-40 right-20 w-16 h-16 bg-gradient-to-br from-green-400 to-teal-500 rounded-full opacity-20"
+          animate={{
+            y: [0, 30, 0],
+            x: [0, -10, 0]
+          }}
+          transition={{
+            duration: 4,
+            repeat: Infinity,
+            ease: "easeInOut"
+          }}
+        />
+        <motion.div
+          className="absolute bottom-20 left-1/4 w-12 h-12 bg-gradient-to-br from-purple-400 to-pink-500 rounded-full opacity-25"
+          animate={{
+            scale: [1, 1.2, 1],
+            rotate: [0, -180, -360]
+          }}
+          transition={{
+            duration: 5,
+            repeat: Infinity,
+            ease: "easeInOut"
+          }}
+        />
+
+        <div className="relative max-w-7xl mx-auto px-6 sm:px-8 lg:px-12">
+          <motion.div
+            className="text-center"
+            initial="initial"
+            animate="animate"
+            variants={staggerContainer}
+          >
+            <motion.div variants={fadeInUp}>
+              <Badge variant="secondary" className="mb-8 bg-gradient-to-r from-amber-100 to-orange-100 text-amber-900 border-2 border-amber-200/50 px-6 py-2 text-sm font-medium shadow-lg">
+                <Sparkles className="w-4 h-4 mr-2" />
+                AI-Powered Recipe Generation
+              </Badge>
+            </motion.div>
+
+            <motion.h1
+              className="text-5xl md:text-7xl lg:text-8xl font-black text-gray-900 mb-8 leading-tight"
+              variants={fadeInUp}
+            >
+              Cook with Your
+              <motion.span
+                className="block bg-gradient-to-r from-rose-600  via-orange-600 to-amber-600 bg-clip-text text-transparent"
+                whileHover={{ scale: 1.05 }}
+                transition={{ type: "spring", stiffness: 300 }}
+              >
+                Mood
+              </motion.span>
+            </motion.h1>
+
+            <motion.p
+              className="text-xl md:text-2xl lg:text-3xl text-gray-700 mb-12 max-w-4xl mx-auto leading-relaxed font-medium"
+              variants={fadeInUp}
+            >
+              Discover personalized recipes that match your emotions. From comfort food for cozy nights to energizing
+              meals for busy days.
+            </motion.p>
+
+            <motion.div
+              variants={fadeInUp}
+              className="flex flex-col sm:flex-row gap-6 justify-center items-center"
+            >
+              <motion.div
+                whileHover={{ scale: 1.05, y: -2 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                <Button
+                  size="lg"
+                  className="bg-gradient-to-r from-rose-500 via-pink-500 to-purple-500 hover:from-rose-600 hover:via-pink-600 hover:to-purple-600 text-white text-lg px-10 py-4 h-auto font-semibold shadow-2xl hover:shadow-3xl transition-all duration-300 border-0 rounded-2xl"
+                  onClick={() => window.location.href = '/create'}
+                >
+                  Start Cooking Now
+                  <ChefHat className="ml-3 h-5 w-5" />
+                </Button>
+              </motion.div>
+            </motion.div>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* Features Section */}
+      <section id="features" className="py-28 bg-gradient-to-br from-cyan-100 via-indigo-50 to-purple-100">
+        <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12">
+          <motion.div
+            initial={{ opacity: 0, y: 40 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            viewport={{ once: true }}
+            className="text-center mb-20"
+          >
+            <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">Amazing Features</h2>
+            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+              Discover what makes our mood-based cooking experience unique
+            </p>
+          </motion.div>
+
+          <motion.div
+            className="grid md:grid-cols-2 lg:grid-cols-3 gap-10"
+            initial="initial"
+            whileInView="animate"
+            viewport={{ once: true }}
+            variants={staggerContainer}
+          >
+            <motion.div variants={scaleIn}>
+              <Card className="border-0 shadow-2xl hover:shadow-3xl transition-all duration-500 bg-gradient-to-br from-white to-rose-50 overflow-hidden group">
+                <CardContent className="p-10 text-center relative">
+                  <motion.div
+                    className="w-20 h-20 bg-gradient-to-br from-rose-400 to-pink-500 rounded-3xl flex items-center justify-center mx-auto mb-8 shadow-xl"
+                    whileHover={{ rotate: 10, scale: 1.1 }}
+                    transition={{ type: "spring", stiffness: 300 }}
+                  >
+                    <Heart className="h-10 w-10 text-white" />
+                  </motion.div>
+                  <h3 className="text-2xl font-bold text-gray-900 mb-6">Mood-Based Recipes</h3>
+                  <p className="text-gray-600 leading-relaxed text-lg">
+                    Tell us how you're feeling, and we'll suggest the perfect recipe to match your mood and satisfy your
+                    cravings.
+                  </p>
+                </CardContent>
+              </Card>
+            </motion.div>
+
+            <motion.div variants={scaleIn}>
+              <Card className="border-0 shadow-2xl hover:shadow-3xl transition-all duration-500 bg-gradient-to-br from-white to-indigo-50 overflow-hidden group">
+                <CardContent className="p-10 text-center relative">
+                  <motion.div
+                    className="w-20 h-20 bg-gradient-to-br from-indigo-400 to-purple-500 rounded-3xl flex items-center justify-center mx-auto mb-8 shadow-xl"
+                    whileHover={{ rotate: -10, scale: 1.1 }}
+                    transition={{ type: "spring", stiffness: 300 }}
+                  >
+                    <Sparkles className="h-10 w-10 text-white" />
+                  </motion.div>
+                  <h3 className="text-2xl font-bold text-gray-900 mb-6">AI-Powered Intelligence</h3>
+                  <p className="text-gray-600 leading-relaxed text-lg">
+                    Advanced AI algorithms analyze your preferences, dietary restrictions, and mood to create personalized
+                    recipe suggestions.
+                  </p>
+                </CardContent>
+              </Card>
+            </motion.div>
+
+            <motion.div variants={scaleIn}>
+              <Card className="border-0 shadow-2xl hover:shadow-3xl transition-all duration-500 bg-gradient-to-br from-white to-emerald-50 overflow-hidden group">
+                <CardContent className="p-10 text-center relative">
+                  <motion.div
+                    className="w-20 h-20 bg-gradient-to-br from-emerald-400 to-teal-500 rounded-3xl flex items-center justify-center mx-auto mb-8 shadow-xl"
+                    whileHover={{ rotate: 10, scale: 1.1 }}
+                    transition={{ type: "spring", stiffness: 300 }}
+                  >
+                    <Clock className="h-10 w-10 text-white" />
+                  </motion.div>
+                  <h3 className="text-2xl font-bold text-gray-900 mb-6">Quick & Easy</h3>
+                  <p className="text-gray-600 leading-relaxed text-lg">
+                    Get instant recipe recommendations with step-by-step instructions, cooking times, and ingredient
+                    lists.
+                  </p>
+                </CardContent>
+              </Card>
+            </motion.div>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* How It Works Section */}
+      <section id="how-it-works" className="py-28 bg-gradient-to-br from-amber-100 to-purple-100">
+        <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12">
+          <motion.div
+            initial={{ opacity: 0, y: 40 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            viewport={{ once: true }}
+            className="text-center mb-20"
+          >
+            <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">How It Works</h2>
+            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+              Three simple steps to discover your perfect recipe
+            </p>
+          </motion.div>
+
+          <div className="grid md:grid-cols-3 gap-12">
+            <motion.div
+              className="text-center"
+              initial="initial"
+              whileInView="animate"
+              viewport={{ once: true }}
+              variants={slideInLeft}
+            >
+              <motion.div
+                className="w-24 h-24 bg-gradient-to-br from-rose-500 to-pink-600 rounded-full flex items-center justify-center mx-auto mb-8 text-white text-3xl font-black shadow-2xl"
+                whileHover={{ scale: 1.1, rotate: 5 }}
+                transition={{ type: "spring", stiffness: 300 }}
+              >
+                1
+              </motion.div>
+              <h3 className="text-2xl font-bold text-gray-900 mb-6">Share Your Mood</h3>
+              <p className="text-gray-600 text-lg leading-relaxed">
+                Tell us how you're feeling today - happy, stressed, adventurous, or craving comfort food.
+              </p>
+            </motion.div>
+
+            <motion.div
+              className="text-center"
+              initial="initial"
+              whileInView="animate"
+              viewport={{ once: true }}
+              variants={fadeInUp}
+            >
+              <motion.div
+                className="w-24 h-24 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-full flex items-center justify-center mx-auto mb-8 text-white text-3xl font-black shadow-2xl"
+                whileHover={{ scale: 1.1, rotate: -5 }}
+                transition={{ type: "spring", stiffness: 300 }}
+              >
+                2
+              </motion.div>
+              <h3 className="text-2xl font-bold text-gray-900 mb-6">AI Magic</h3>
+              <p className="text-gray-600 text-lg leading-relaxed">
+                Our AI analyzes your mood, preferences, and dietary needs to find the perfect recipe match.
+              </p>
+            </motion.div>
+
+            <motion.div
+              className="text-center"
+              initial="initial"
+              whileInView="animate"
+              viewport={{ once: true }}
+              variants={slideInRight}
+            >
+              <motion.div
+                className="w-24 h-24 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-full flex items-center justify-center mx-auto mb-8 text-white text-3xl font-black shadow-2xl"
+                whileHover={{ scale: 1.1, rotate: 5 }}
+                transition={{ type: "spring", stiffness: 300 }}
+              >
+                3
+              </motion.div>
+              <h3 className="text-2xl font-bold text-gray-900 mb-6">Start Cooking</h3>
+              <p className="text-gray-600 text-lg leading-relaxed">
+                Get detailed instructions, ingredient lists, and cooking tips to create your perfect meal.
+              </p>
+            </motion.div>
           </div>
         </div>
+      </section>
 
-        {/* Selection Form */}
-        <Card className="max-w-6xl mx-auto mb-8 shadow-lg border-slate-200">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <MapPin className="h-5 w-5 text-indigo-500" />
-              Tell us your preferences
-            </CardTitle>
-            <CardDescription>
-              Select your cuisine preference, location, and current mood for personalized recommendations
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-              <div>
-                <label className="text-sm font-medium text-slate-700 mb-2 block">Cuisine</label>
-                <Select value={cuisine} onValueChange={setCuisine}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select cuisine" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {cuisines.map((c) => (
-                      <SelectItem key={c} value={c}>{c}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
+      {/* CTA Section */}
+      <section className="py-28 bg-gradient-to-r from-purple-200 via-rose-200 to-orange-200">
+        <div className="max-w-5xl mx-auto text-center px-6 sm:px-8 lg:px-12">
+          <motion.div
+            initial={{ opacity: 0, y: 40 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            viewport={{ once: true }}
+          >
+            <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-8">Ready to Cook with Your Mood?</h2>
+            <p className="text-xl md:text-2xl text-gray-700 mb-12 leading-relaxed">
+              Join thousands of home cooks who've discovered the joy of mood-based cooking
+            </p>
 
-              <div>
-                <label className="text-sm font-medium text-slate-700 mb-2 block">State/City</label>
-                <Select value={state} onValueChange={setState}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select location" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {states.map((s) => (
-                      <SelectItem key={s} value={s}>{s}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-
-              <div>
-                <label className="text-sm font-medium text-slate-700 mb-2 block">Mood</label>
-                <Select value={mood} onValueChange={setMood}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select mood" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {moods.map((m) => (
-                      <SelectItem key={m} value={m}>{m}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-              <div>
-                <label className="text-sm font-medium text-slate-700 mb-2 block">Preferences</label>
-                <Select value={preference} onValueChange={setPreference}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select Preference" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {preferences.map((p) => (
-                      <SelectItem key={p} value={p}>{p}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
-
-            <Button
-              onClick={handleGenerateMenu}
-              disabled={loading || !cuisine || !state || !mood || !preference}
-              className="w-full cursor-pointer relative overflow-hidden text-white font-semibold text-lg py-4 px-8 rounded-2xl shadow-2xl transition-all duration-300 hover:scale-[1.02] hover:shadow-3xl active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
-              style={{
-                background: `
-      radial-gradient(circle at 30% 20%, rgba(255, 255, 255, 0.3) 0%, transparent 50%),
-      radial-gradient(circle at 70% 80%, rgba(240, 240, 245, 0.2) 0%, transparent 50%),
-      radial-gradient(circle at 20% 70%, rgba(250, 250, 255, 0.25) 0%, transparent 50%),
-      linear-gradient(135deg, 
-        rgba(99, 102, 241, 0.9) 0%, 
-        rgba(139, 92, 246, 0.85) 25%, 
-        rgba(168, 85, 247, 0.9) 50%, 
-        rgba(147, 51, 234, 0.95) 75%, 
-        rgba(126, 34, 206, 1) 100%
-      ),
-      repeating-linear-gradient(
-        45deg,
-        transparent,
-        transparent 2px,
-        rgba(255, 255, 255, 0.08) 2px,
-        rgba(255, 255, 255, 0.08) 4px
-      ),
-      repeating-linear-gradient(
-        -45deg,
-        transparent,
-        transparent 3px,
-        rgba(255, 255, 255, 0.05) 3px,
-        rgba(255, 255, 255, 0.05) 6px
-      )
-    `,
-                backgroundSize: '200px 200px, 300px 300px, 250px 250px, 100% 100%, 15px 15px, 20px 20px'
-              }}
-              size="lg"
+            <motion.div
+              className="flex flex-col sm:flex-row gap-6 justify-center items-center mb-16"
+              initial="initial"
+              whileInView="animate"
+              viewport={{ once: true }}
+              variants={staggerContainer}
             >
-              {/* Marble texture overlay */}
-              <div
-                className="absolute inset-0 opacity-30 rounded-2xl"
-                style={{
-                  background: `
-        radial-gradient(circle at 15% 25%, rgba(255, 255, 255, 0.4) 0%, transparent 40%),
-        radial-gradient(circle at 85% 75%, rgba(255, 255, 255, 0.3) 0%, transparent 45%),
-        radial-gradient(circle at 45% 10%, rgba(255, 255, 255, 0.2) 0%, transparent 35%),
-        radial-gradient(circle at 60% 90%, rgba(255, 255, 255, 0.25) 0%, transparent 40%)
-      `
-                }}
-              />
-
-              {/* Shimmer effect */}
-              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent transform -skew-x-12 -translate-x-full group-hover:translate-x-full transition-transform duration-1000 rounded-2xl" />
-
-              {/* Button text */}
-              <span className="relative z-10 drop-shadow-lg">
-                {loading ? 'Generating Menu...' : 'Generate My Menu ✨'}
-              </span>
-            </Button>
-          </CardContent>
-        </Card>
-
-        {/* Recipes Grid */}
-        {recipes.length > 0 && (
-          <div className="space-y-8">
-            <div className="text-center">
-              <h2 className="text-2xl font-bold text-slate-900 mb-2">Your Personalized Menu</h2>
-              <p className="text-slate-600">Perfect for {getCurrentSeason().toLowerCase()} • {cuisine} cuisine • {mood} • {preference}</p>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {recipes.map((recipe, index) => (
-                <Card
-                  key={index}
-                  className="cursor-pointer hover:shadow-lg transition-all duration-200 hover:scale-105 bg-white border-2 border-slate-100"
-                  onClick={() => setSelectedRecipe(recipe)}
+              <motion.div
+                variants={scaleIn}
+                whileHover={{ scale: 1.05, y: -3 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                <Button
+                  size="lg"
+                  className="bg-gradient-to-r from-purple-600 via-pink-600 to-rose-600 hover:from-purple-700 hover:via-pink-700 hover:to-rose-700 text-white text-xl px-12 py-5 h-auto font-bold shadow-2xl hover:shadow-3xl transition-all duration-300 border-0 rounded-2xl"
+                  onClick={() => window.location.href = '/create'}
                 >
-                  <CardHeader>
-                    <CardTitle className="text-lg text-indigo-700">{recipe.name}</CardTitle>
-                    <CardDescription>{recipe.description}</CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="flex items-center justify-between text-sm text-slate-500 mb-3">
-                      <div className="flex items-center gap-1">
-                        <Clock className="h-4 w-4" />
-                        <span>{recipe.cookingTime}</span>
-                      </div>
-                      <div className="flex items-center gap-1">
-                        <Users className="h-4 w-4" />
-                        <span>{recipe.servings}</span>
-                      </div>
-                    </div>
-                    <Badge
-                      variant={recipe.difficulty === 'Easy' ? 'default' : recipe.difficulty === 'Medium' ? 'secondary' : 'destructive'}
-                      className="text-xs"
-                    >
-                      {recipe.difficulty}
-                    </Badge>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* Recipe Detail Modal */}
-        {selectedRecipe && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-            <Card className="max-w-2xl w-full max-h-[90vh] overflow-y-auto">
-              <CardHeader className="sticky top-0 bg-white border-b">
-                <div className="flex items-center justify-between">
-                  <CardTitle className="text-xl text-indigo-700">{selectedRecipe.name}</CardTitle>
-                  <Button variant="outline" size="sm" onClick={() => setSelectedRecipe(null)}>
-                    ✕
-                  </Button>
-                </div>
-                <CardDescription>{selectedRecipe.description}</CardDescription>
-                <div className="flex items-center gap-4 text-sm text-slate-600">
-                  <div className="flex items-center gap-1">
-                    <Clock className="h-4 w-4" />
-                    <span>{selectedRecipe.cookingTime}</span>
-                  </div>
-                  <div className="flex items-center gap-1">
-                    <Users className="h-4 w-4" />
-                    <span>{selectedRecipe.servings}</span>
-                  </div>
-                  <Badge variant="secondary">{selectedRecipe.difficulty}</Badge>
-                </div>
-              </CardHeader>
-
-              <CardContent className="space-y-6">
-                <div>
-                  <h3 className="font-semibold text-slate-900 mb-3">Ingredients:</h3>
-                  <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                    {selectedRecipe.ingredients.map((ingredient, i) => (
-                      <li key={i} className="flex items-center gap-2 text-sm">
-                        <div className="w-2 h-2 bg-indigo-400 rounded-full"></div>
-                        {ingredient}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-
-                <Separator />
-
-                <div>
-                  <h3 className="font-semibold text-slate-900 mb-3">Instructions:</h3>
-                  <ol className="space-y-3">
-                    {selectedRecipe.instructions.map((instruction, i) => (
-                      <li key={i} className="flex gap-3">
-                        <span className="flex-shrink-0 w-6 h-6 bg-indigo-100 text-indigo-700 rounded-full flex items-center justify-center text-sm font-medium">
-                          {i + 1}
-                        </span>
-                        <span className="text-sm text-slate-700">{instruction}</span>
-                      </li>
-                    ))}
-                  </ol>
-                </div>
-
-                {selectedRecipe.tips.length > 0 && (
-                  <>
-                    <Separator />
-                    <div>
-                      <h3 className="font-semibold text-slate-900 mb-3">Chef's Tips:</h3>
-                      <ul className="space-y-2">
-                        {selectedRecipe.tips.map((tip, i) => (
-                          <li key={i} className="flex items-start gap-2 text-sm text-slate-600">
-                            <span className="text-purple-500 mt-0.5">💡</span>
-                            {tip}
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                  </>
-                )}
-              </CardContent>
-            </Card>
-          </div>
-        )}
-      </div>
+                  Start Cooking Now
+                  <ChefHat className="ml-3 h-6 w-6" />
+                </Button>
+              </motion.div>
+            </motion.div>
+          </motion.div>
+        </div>
+      </section>
     </div>
-  );
+  )
 }

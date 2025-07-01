@@ -257,7 +257,7 @@ const FloatingDock = () => {
                     <div className="absolute -top-20 bg-gradient-to-r from-gray-800 to-gray-900 text-white text-sm font-medium px-4 py-3 rounded-xl shadow-lg transform animate-in fade-in slide-in-from-bottom-2 duration-200 whitespace-nowrap">
                       <div className="relative">
                         {item.label}
-                        <div className="absolute top-full left-1/2 transform -translate-x-1/2 w-3 h-3 bg-gradient-to-br from-gray-800 to-gray-900 rotate-45 -mt-1.5"></div>
+                       
                       </div>
                     </div>
                   )}
