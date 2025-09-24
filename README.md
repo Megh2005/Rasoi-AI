@@ -231,9 +231,17 @@ Feel free to contribute by:
 - Adding recipe ratings and favorites
 - Implementing user accounts and saved recipes
 
+  
+## Our Contributors
+
+<a href = "https://github.com/Tanu-N-Prabhu/Python/graphs/contributors">
+  <img src = "https://contrib.rocks/image?repo = Megh2005/Rasoi-AI"/>
+</a>
+
 ## License 📄
 
 This project is open source and available under the [MIT License](LICENSE).
+
 
 ## Support 💬
 
